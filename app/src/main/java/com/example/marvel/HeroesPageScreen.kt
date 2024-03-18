@@ -52,6 +52,7 @@ import kotlin.math.abs
 import kotlin.math.max
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HeroesPageScreen(navController: NavController) {
     val heroes = remember { HeroList.heroList }

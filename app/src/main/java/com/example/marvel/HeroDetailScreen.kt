@@ -44,7 +44,7 @@ fun HeroDetailScreen(hero: Hero, navigateBack: () -> Unit) {
                 .crossfade(true)
                 .build(),
             contentDescription = "background_image",
-            contentScale = ContentScale.FillBounds,
+            contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
 
