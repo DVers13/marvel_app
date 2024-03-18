@@ -4,10 +4,12 @@ package com.example.marvel
 
 
 import android.annotation.SuppressLint
+import android.service.autofill.Validators.or
 import android.util.Log
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapFlingBehavior
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -15,8 +17,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,20 +26,19 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -48,8 +47,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.marvel.HeroList.heroList
+import com.example.marvel.ui.theme.BackgroundGray
 import kotlin.math.abs
-import kotlin.math.max
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -64,9 +63,9 @@ fun HeroesPageScreen(navController: NavController) {
 
     val gradient = Brush.linearGradient(
         colors = listOf(
-            Color(0xFF2B272B),
-            Color(0xFF2B272B),
-            Color(0xFF2B272B),
+            BackgroundGray,
+            BackgroundGray,
+            BackgroundGray,
             heroColorState.value,
             heroColorState.value
         ),
@@ -153,6 +152,25 @@ fun HeroesList(
                     abs(centerX - itemCenterX)
                 }
 
+                val delta = 0.1f
+                val density = LocalDensity.current
+                var pageOffset = closestItem?.let {
+                    val itemCenterX = it.offset + it.size / 2
+                    val distanceFromCenter = abs(centerX - itemCenterX)
+                    val maxWidthInPxFloat = with(density) { maxWidthInPx.toPx() }
+                    distanceFromCenter / maxWidthInPxFloat
+                } ?: 0f
+
+                if (pageOffset <= delta && pageOffset >= -delta){
+                    pageOffset = 0f
+            }
+                Log.d("DDD", "$pageOffset")
+
+                val imageSize by animateFloatAsState(
+                    targetValue = if(pageOffset != 0.0f) 0.75f else 1f,
+                    animationSpec = tween(durationMillis = 300)
+                )
+
                 val centerHeroId = closestItem?.index ?: -1
                 val centerHeroColor = if (centerHeroId != -1) {
                     val color = heroes.getOrNull(centerHeroId)?.color
@@ -166,7 +184,8 @@ fun HeroesList(
                 HeroItem(
                     hero = hero,
                     onItemClick = { navController.navigate(Screen.HeroDetail.passIndex(hero.id)) },
-                    maxWidthInPx
+                    maxWidthInPx,
+                    imageSize
                 )
             }
         }
@@ -174,15 +193,15 @@ fun HeroesList(
 }
 
 @Composable
-fun HeroItem(hero: Hero, onItemClick: () -> Unit, maxWidth: Dp) {
+fun HeroItem(hero: Hero, onItemClick: () -> Unit, maxWidth: Dp, imageSize: Float) {
     Layout(
         content = {
-            HeroCard(hero = hero, onClick = onItemClick)
+            HeroCard(hero = hero, onClick = onItemClick, imageSize)
         },
-        measurePolicy = { measures, constraints ->
-            val placeable = measures.first().measure(constraints)
+        measurePolicy = { measurables, constraints ->
+            val placeable = measurables.first().measure(constraints)
 
-            val maxWidthInPx = maxWidth.roundToPx()
+            val maxWidthInPx = maxWidth.toPx()
 
             val itemWidth = placeable.width
 
@@ -191,12 +210,14 @@ fun HeroItem(hero: Hero, onItemClick: () -> Unit, maxWidth: Dp) {
             val endSpace =
                 if (hero.id == heroList.size - 1) (maxWidthInPx - itemWidth) / 2 else 0
 
-            val width = startSpace + placeable.width + endSpace
-            layout(width, placeable.height) {
+            val width = (startSpace.toFloat() + placeable.measuredWidth.toFloat() + endSpace.toFloat())
 
-                val x = if (hero.id == 0) startSpace else 0
+            layout(width.toInt(), placeable.height) {
+
+                val x = if (hero.id == 0) startSpace.toInt() else 0
                 placeable.place(x, 0)
             }
         }
     )
 }
+

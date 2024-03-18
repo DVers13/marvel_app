@@ -2,7 +2,6 @@ package com.example.marvel
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -21,10 +21,11 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
 @Composable
-fun HeroCard(hero: Hero, onClick: () -> Unit) {
+fun HeroCard(hero: Hero, onClick: () -> Unit, imageSize: Float) {
     val heroName = hero.name;
     val heroUrl = hero.url;
-    Box(modifier = Modifier.fillMaxSize())
+    Box(modifier = Modifier.fillMaxSize().graphicsLayer { scaleX = imageSize
+        scaleY = imageSize})
     {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
