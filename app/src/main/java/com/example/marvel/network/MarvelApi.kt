@@ -1,13 +1,5 @@
 package com.example.marvel.network
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.security.MessageDigest
@@ -35,6 +27,13 @@ object MarvelApi {
         val ts = System.currentTimeMillis().toString()
         val hash = generateHash(ts)
         val response = service.getCharacters(limit, PUBLIC_KEY, ts, hash)
+        return response.data.results
+    }
+
+    suspend fun getCharacter(characterId: Int): List<Result> {
+        val ts = System.currentTimeMillis().toString()
+        val hash = generateHash(ts)
+        val response = service.getCharacter(characterId, PUBLIC_KEY, ts, hash)
         return response.data.results
     }
 }

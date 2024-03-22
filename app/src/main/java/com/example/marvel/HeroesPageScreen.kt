@@ -4,7 +4,6 @@ package com.example.marvel
 
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -32,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
 import com.example.marvel.network.Result
 import com.example.marvel.ui.theme.BackgroundGray
@@ -94,7 +94,7 @@ fun LogoAndTitle() {
             modifier = Modifier
                 .height(30.dp)
                 .width(240.dp),
-            text = "Choose your hero",
+            text = stringResource(R.string.choose_hero),
             textAlign = TextAlign.Center,
             color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold
         )
@@ -113,8 +113,6 @@ fun HeroesList(
             state = pagerState,
             modifier = Modifier.background(Color.Transparent)
         ) { index ->
-            Log.d("dddd", "$index")
-
             val pageOffset = (pagerState.currentPage - index) + pagerState.currentPageOffsetFraction
             val imageSize by animateFloatAsState(
                 targetValue = if (pageOffset != 0.0f) 0.75f else 1f,
