@@ -12,6 +12,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,9 +34,9 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun AppNavigator(navController: NavHostController) {
-    var heroes by remember { mutableStateOf<List<Result>>(emptyList()) }
-    var loading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf(false) }
+    var heroes by rememberSaveable { mutableStateOf<List<Result>>(emptyList()) }
+    var loading by rememberSaveable { mutableStateOf(true) }
+    var error by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         try {
