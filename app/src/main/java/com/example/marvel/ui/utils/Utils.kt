@@ -10,5 +10,15 @@ val colors = listOf(
     Color.Blue,
     Color.Green,
     Color.Yellow,
-    Color.Magenta
+    Color.Magenta,
+    Color.Red,
+    Color.Blue,
+    Color.Green,
+    Color.Yellow,
+    Color.Magenta,
+    Color.Red,
+    Color.Blue,
+    Color.Green,
+    Color.Yellow,
+    Color.Magenta,
 )

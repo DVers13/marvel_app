@@ -1,4 +1,4 @@
-package com.example.marvel
+package com.example.marvel.ui
 
 const val DETAIL_ARGUMENT_KEY = "index"
 

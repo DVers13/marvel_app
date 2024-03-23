@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package com.example.marvel
+package com.example.marvel.ui
 
 
 import android.annotation.SuppressLint
@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -33,6 +34,8 @@ import androidx.navigation.NavController
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
+import com.example.marvel.ui.components.HeroCard
+import com.example.marvel.R
 import com.example.marvel.network.Result
 import com.example.marvel.ui.theme.BackgroundGray
 import com.example.marvel.ui.utils.colors
@@ -41,7 +44,7 @@ import com.example.marvel.ui.utils.colors
 @Composable
 fun HeroesPageScreen(navController: NavController, heroes: List<Result>) {
 
-    val pagerState = rememberPagerState(pageCount = { colors.size })
+    val pagerState = rememberPagerState(pageCount = { heroes.size })
     val gradient = Brush.linearGradient(
         colors = listOf(
             BackgroundGray,
@@ -108,10 +111,10 @@ fun HeroesList(
     heroes: List<Result>,
     pagerState: PagerState
 ) {
-    Box(modifier = Modifier.padding(vertical = 48.dp)) {
+    Box(modifier = Modifier.fillMaxWidth()) {
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.background(Color.Transparent)
+            modifier = Modifier.background(Color.Transparent).fillMaxSize()
         ) { index ->
             val pageOffset = (pagerState.currentPage - index) + pagerState.currentPageOffsetFraction
             val imageSize by animateFloatAsState(
@@ -121,7 +124,8 @@ fun HeroesList(
             HeroCard(
                 hero = heroes[index],
                 onClick = { navController.navigate(Screen.HeroDetail.passIndex(index)) },
-                imageSize
+                imageSize,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
